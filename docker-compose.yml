@@ -3,21 +3,26 @@ services:
     build: .
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      - DB_HOST=db        
-      - DB_NAME=inventory_db
-      - DB_USER=inventory_user
-      - DB_PASSWORD=inventory_pass
-      - SPRING_SECURITY_USER_NAME=admin
-      - SPRING_SECURITY_USER_PASSWORD=admin123
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS}
+      - INITIAL_ADMIN_USERNAME=${INITIAL_ADMIN_USERNAME}
+      - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
+      - APP_PASSWORD=${APP_PASSWORD}
     depends_on:
       - db
 
   db:
-    image: postgres:15
+    image: postgres:16
     environment:
-      - POSTGRES_DB=inventory_db
-      - POSTGRES_USER=inventory_user
-      - POSTGRES_PASSWORD=inventory_pass
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
