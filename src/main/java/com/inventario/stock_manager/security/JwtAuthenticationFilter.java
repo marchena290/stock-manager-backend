@@ -1,23 +1,24 @@
 package com.inventario.stock_manager.security;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import com.inventario.stock_manager.model.Role;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.Claims;
+import com.inventario.stock_manager.model.Role;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Filtro que extrae el Bearer JWT del header Authorization, valida el token y establece el SecurityContext.
@@ -40,6 +41,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        
+        // Skipear el filtro JWT en rutas públicas
+        String path = request.getRequestURI();
+        if (path.equals("/health") || path.equals("/auth/login") || path.startsWith("/api/products")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         Optional<String> token = extractBearerToken(request);
 
         if (token.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -52,8 +61,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var auth = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (Exception ignored) {
-                // Token inválido o expirado: no establecer autenticación
+            } catch (Exception e) {
+                // Token inválido o expirado - ignorar silenciosamente
             }
         }
 

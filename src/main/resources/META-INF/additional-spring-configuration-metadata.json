@@ -1,0 +1,26 @@
+{
+  "groups": [
+    {
+      "name": "app",
+      "type": "java.lang.Object",
+      "description": "Propiedades custom de la aplicación."
+    },
+    {
+      "name": "app.jwt",
+      "type": "com.inventario.stock_manager.config.JwtProperties",
+      "description": "Configuración JWT para autenticación."
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Clave secreta para firmar tokens JWT (mínimo 32 caracteres para HS256)."
+    },
+    {
+      "name": "app.jwt.expiration-ms",
+      "type": "java.lang.Long",
+      "description": "Tiempo de expiración del JWT en milisegundos."
+    }
+  ]
+}

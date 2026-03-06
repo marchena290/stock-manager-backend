@@ -35,9 +35,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/health", "/auth/login","/api/products/**").permitAll()
-                        .anyRequest().authenticated())
+                        .authorizeHttpRequests(auth -> auth
+                            .requestMatchers("/health", "/auth/login").permitAll()
+                            .requestMatchers("/api/products/**").permitAll() // Esto cubre GET, POST, PUT, DELETE
+                            .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

@@ -8,12 +8,27 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
   security:
     user:
-      name: ${SPRING_SECURITY_USER_NAME}    
-      password: ${SPRING_SECURITY_USER_PASSWORD
+      name: ${INITIAL_ADMIN_USERNAME}
+      password: ${INITIAL_ADMIN_PASSWORD}
+
+  # Configuración de Multipart para st de archivos (imágenes, etc.)
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB         # Tamaño máximo por archivo
+      max-request-size: 15MB      # Tamaño máximo del request completo
+      file-size-threshold: 2MB    # Umbral para escribir a disco temporal 
 
 server:
   port: 8080
+
+# JWT (ST-02). Sin hardcodear: usar variables de entorno.
+# JWT_SECRET debe tener al menos 32 caracteres (HS256).
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
